@@ -8,9 +8,9 @@ patches:
   - path: patches/api-replicas.yaml
   - path: patches/ui-replicas.yaml
 
-# En dev: imágenes con tag 'dev'
+# Tag actualizado automáticamente por Jenkins CI
 images:
   - name: gjisus/golabs-api
-    newTag: dev
+    newTag: latest
   - name: gjisus/golabs-ui
-    newTag: dev
+    newTag: latest
