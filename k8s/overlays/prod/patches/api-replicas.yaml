@@ -1,0 +1,8 @@
+# Producción: 2 réplicas de la API
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golabs-api
+  namespace: golabs
+spec:
+  replicas: 2

@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: golabs
+  namespace: argocd
+spec:
+  description: "Proyecto GoLabs — API + UI + DB"
+
+  # Repositorios permitidos
+  sourceRepos:
+    - "https://github.com/BadByte-Team/golabs-infra.git"
+
+  # Destinos permitidos
+  destinations:
+    - namespace: golabs
+      server: https://kubernetes.default.svc
+
+  # Recursos que la app puede gestionar
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+
+  namespaceResourceWhitelist:
+    - group: ""
+      kind: "*"
+    - group: apps
+      kind: "*"
+    - group: autoscaling
+      kind: "*"
+    - group: networking.k8s.io
+      kind: "*"

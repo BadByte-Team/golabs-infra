@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: golabs-db
+  namespace: golabs
+  labels:
+    app.kubernetes.io/name: golabs-db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: golabs
+spec:
+  serviceName: golabs-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: golabs-db
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: golabs-db
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb:11
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: golabs-db-secret
+          env:
+            - name: MARIADB_DATABASE
+              value: golabs
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/mysql
+          livenessProbe:
+            exec:
+              command:
+                - healthcheck.sh
+                - --connect
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command:
+                - healthcheck.sh
+                - --connect
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+  volumeClaimTemplates:
+    - metadata:
+        name: db-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path # k3s default StorageClass
+        resources:
+          requests:
+            storage: 10Gi

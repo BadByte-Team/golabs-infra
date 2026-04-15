@@ -1,0 +1,8 @@
+# Reducir réplicas de la UI a 1 en dev
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golabs-ui
+  namespace: golabs
+spec:
+  replicas: 1

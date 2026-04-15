@@ -1,0 +1,8 @@
+# Reducir réplicas de la API a 1 en dev
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golabs-api
+  namespace: golabs
+spec:
+  replicas: 1

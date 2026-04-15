@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golabs-api
+  namespace: golabs
+  labels:
+    app.kubernetes.io/name: golabs-api
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: golabs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: golabs-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: golabs-api
+        app.kubernetes.io/component: api
+    spec:
+      containers:
+        - name: api
+          image: gjisus/golabs-api:latest
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: golabs-api-secret
+          env:
+            - name: DB_HOST
+              value: golabs-db-0.golabs-db.golabs.svc.cluster.local
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_NAME
+              value: golabs
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+      restartPolicy: Always

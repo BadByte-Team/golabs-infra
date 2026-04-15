@@ -1,0 +1,39 @@
+# Ingress configurado para Traefik (default en k3s)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: golabs-ingress
+  namespace: golabs
+  labels:
+    app.kubernetes.io/part-of: golabs
+  annotations:
+    # Traefik-specific annotations (k3s default ingress controller)
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+    - http:
+        paths:
+          # API requests → golabs-api service
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: golabs-api
+                port:
+                  number: 8080
+          # Health checks → golabs-api service
+          - path: /healthz
+            pathType: Prefix
+            backend:
+              service:
+                name: golabs-api
+                port:
+                  number: 8080
+          # Everything else → UI service
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: golabs-ui
+                port:
+                  number: 80

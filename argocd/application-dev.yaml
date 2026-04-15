@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: golabs-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: golabs
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: golabs
+
+  source:
+    # ← Reemplazar con tu repo real
+    repoURL: https://github.com/BadByte-Team/golabs-infra.git
+    targetRevision: main
+    path: k8s/overlays/dev
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: golabs
+
+  syncPolicy:
+    automated:
+      prune: true # Eliminar recursos que ya no están en Git
+      selfHeal: true # Re-aplicar si alguien edita en el clúster manualmente
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 1m

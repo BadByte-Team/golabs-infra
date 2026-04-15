@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: golabs
+
+resources:
+  - namespace.yaml
+  - api/secret.yaml
+  - api/deployment.yaml
+  - api/service.yaml
+  - api/hpa.yaml
+  - ui/configmap-nginx.yaml
+  - ui/deployment.yaml
+  - ui/service.yaml
+  - db/secret.yaml
+  - db/statefulset.yaml
+  - db/service.yaml
+  - ingress.yaml
+
+labels:
+  - pairs:
+      app.kubernetes.io/managed-by: kustomize
+      app.kubernetes.io/part-of: golabs
+    includeSelectors: true
