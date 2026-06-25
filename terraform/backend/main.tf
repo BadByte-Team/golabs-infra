@@ -29,7 +29,7 @@ resource "aws_s3_bucket" "terraform_state" {
   }
 
   tags = {
-    Name        = "golabs-terraform-state"
+    Name        = "golabs-terraform-state-redwings-ctf-1"
     Project     = "golabs"
     Environment = "shared"
     ManagedBy   = "terraform"
@@ -75,7 +75,7 @@ resource "aws_dynamodb_table" "terraform_locks" {
   }
 
   tags = {
-    Name        = "golabs-terraform-locks"
+    Name        = "golabs-terraform-locks-redwings-ctf-1"
     Project     = "golabs"
     Environment = "shared"
     ManagedBy   = "terraform"

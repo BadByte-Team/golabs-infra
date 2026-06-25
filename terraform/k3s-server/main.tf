@@ -16,10 +16,10 @@ terraform {
 
   # Backend remoto — requiere haber ejecutado terraform/backend/ primero
   backend "s3" {
-    bucket         = "golabs-terraform-state"
+    bucket         = "golabs-terraform-state-redwings-ctf-1"
     key            = "k3s-server/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "golabs-terraform-locks"
+    dynamodb_table = "golabs-terraform-locks-redwings-ctf-1"
     encrypt        = true
   }
 }
@@ -139,7 +139,7 @@ resource "aws_instance" "k3s_server" {
     #!/bin/bash
     set -euo pipefail
 
-    # ── Swap de 2GB (crítico para t3.micro con 1GB RAM) ──
+    # ── Swap de 2GB (crítico para m7i-flex.large con 1GB RAM) ──
     fallocate -l 2G /swapfile
     chmod 600 /swapfile
     mkswap /swapfile

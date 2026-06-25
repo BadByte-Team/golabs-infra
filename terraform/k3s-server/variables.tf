@@ -13,7 +13,7 @@ variable "ami_id" {
 variable "instance_type" {
   description = "Tipo de instancia EC2"
   type        = string
-  default     = "t3.micro" # Free tier eligible
+  default     = "m7i-flex.large" # Free tier eligible
 }
 
 variable "key_name" {
