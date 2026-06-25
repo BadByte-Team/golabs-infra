@@ -24,6 +24,7 @@ k3s-config
 .env
 .env.*
 secrets.local.yaml
+ec2-info.txt
 
 # ── OS / IDE ──
 .DS_Store

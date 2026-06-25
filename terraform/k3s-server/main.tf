@@ -1,5 +1,5 @@
 # ──────────────────────────────────────────────────────
-# EC2 K3s Server — Servidor de producción para GoLabs
+# EC2 K3s Server - Servidor de producción para GoLabs
 # Crea un Security Group y una instancia EC2 donde
 # corre K3s + ArgoCD + la aplicación GoLabs.
 # ──────────────────────────────────────────────────────
@@ -14,7 +14,7 @@ terraform {
     }
   }
 
-  # Backend remoto — requiere haber ejecutado terraform/backend/ primero
+  # Backend remoto - requiere haber ejecutado terraform/backend/ primero
   backend "s3" {
     bucket         = "golabs-terraform-state-redwings-ctf-1"
     key            = "k3s-server/terraform.tfstate"
@@ -53,7 +53,7 @@ resource "aws_security_group" "k3s_sg" {
 
   # HTTP (Traefik Ingress)
   ingress {
-    description = "HTTP — Traefik Ingress"
+    description = "HTTP - Traefik Ingress"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -62,7 +62,7 @@ resource "aws_security_group" "k3s_sg" {
 
   # HTTPS (Traefik Ingress)
   ingress {
-    description = "HTTPS — Traefik Ingress"
+    description = "HTTPS - Traefik Ingress"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
