@@ -9,7 +9,7 @@ pipeline {
     environment {
         // Docker Hub
         DOCKERHUB_CREDS = credentials('dockerhub-id')
-        DOCKERHUB_USER  = 'gjisus'
+        DOCKERHUB_USER  = 'gutsnet'
         API_IMAGE       = "${DOCKERHUB_USER}/golabs-api"
         UI_IMAGE        = "${DOCKERHUB_USER}/golabs-ui"
 

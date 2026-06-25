@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: gjisus/golabs-api:latest
+          image: gutsnet/golabs-api:latest
           ports:
             - containerPort: 8080
               protocol: TCP

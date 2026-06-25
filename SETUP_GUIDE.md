@@ -218,7 +218,7 @@ Después de aplicar, ArgoCD:
 
 | ID | Tipo | Descripción |
 |----|------|-------------|
-| `dockerhub-id` | Username/Password | Docker Hub (gjisus/\*) |
+| `dockerhub-id` | Username/Password | Docker Hub (gutsnet/\*) |
 | `github-token-id` | Username/Password | GitHub PAT para push a golabs-infra |
 | `sonarqube-server` | SonarQube server | Configuración global de SonarQube |
 

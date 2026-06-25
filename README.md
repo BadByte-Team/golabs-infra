@@ -88,8 +88,8 @@ golabs-infra/
 Jenkins (golabs-pj)           Este repo (golabs-infra)         ArgoCD → k3s
 ───────────────────           ────────────────────────         ─────────────
 1. Build & Push Docker   →   2. sed actualiza image tag   →   3. Sync automático
-   gjisus/golabs-api:TAG          en kustomization.yaml           al clúster
-   gjisus/golabs-ui:TAG
+   gutsnet/golabs-api:TAG          en kustomization.yaml           al clúster
+   gutsnet/golabs-ui:TAG
 ```
 
 ## Quick Start

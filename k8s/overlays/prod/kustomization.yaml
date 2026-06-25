@@ -10,7 +10,9 @@ patches:
 
 # En prod: imágenes con un tag específico (actualizado por Jenkins)
 images:
-  - name: gjisus/golabs-api
+  - name: gutsnet/golabs-api
     newTag: latest # golabs-api
-  - name: gjisus/golabs-ui
+  - name: gutsnet/golabs-ui
     newTag: latest # golabs-ui
+  - name: gutsnet/golabs-static
+    newTag: latest # golabs-static

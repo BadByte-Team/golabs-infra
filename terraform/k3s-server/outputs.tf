@@ -23,6 +23,11 @@ output "app_url" {
   value       = "http://${aws_instance.k3s_server.public_ip}"
 }
 
+output "static_site_url" {
+  description = "URL del sitio HTML estático"
+  value       = "http://${aws_instance.k3s_server.public_ip}:30082"
+}
+
 output "argocd_password_command" {
   description = "Comando para obtener la contraseña de ArgoCD"
   value       = "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d"

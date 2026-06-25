@@ -87,6 +87,15 @@ resource "aws_security_group" "k3s_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Static HTML site (NodePort)
+  ingress {
+    description = "Static HTML site"
+    from_port   = 30082
+    to_port     = 30082
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   # Jenkins webhook callback (si Jenkins está externo)
   ingress {
     description = "Jenkins webhook"
