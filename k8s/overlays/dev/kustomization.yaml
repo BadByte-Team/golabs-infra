@@ -13,6 +13,6 @@ images:
   - name: gutsnet/golabs-api
     newTag: ctf # golabs-api
   - name: gutsnet/golabs-ui
-    newTag: ctf-2 # golabs-ui
+    newTag: ctf-3 # golabs-ui
   - name: gutsnet/golabs-static
     newTag: ctf # golabs-static
