@@ -11,8 +11,8 @@ patches:
 # Tag actualizado automáticamente por Jenkins CI
 images:
   - name: gutsnet/golabs-api
-    newTag: latest # golabs-api
+    newTag: ctf # golabs-api
   - name: gutsnet/golabs-ui
-    newTag: latest # golabs-ui
+    newTag: ctf # golabs-ui
   - name: gutsnet/golabs-static
-    newTag: latest # golabs-static
+    newTag: ctf # golabs-static
