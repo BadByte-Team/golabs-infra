@@ -1,0 +1,34 @@
+# ── Terraform ──
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+*.tfvars
+!example.tfvars
+crash.log
+override.tf
+override.tf.json
+
+# ── Claves SSH — NUNCA subir al repositorio ──
+*.pem
+*.key
+aws-key*
+
+# ── Kubernetes ──
+kubeconfig
+*.kubeconfig
+k3s-remote.yaml
+k3s-config
+
+# ── Secrets y variables de entorno ──
+.env
+.env.*
+secrets.local.yaml
+
+# ── OS / IDE ──
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+Thumbs.db

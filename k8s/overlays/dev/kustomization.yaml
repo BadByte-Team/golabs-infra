@@ -11,6 +11,6 @@ patches:
 # Tag actualizado automáticamente por Jenkins CI
 images:
   - name: gjisus/golabs-api
-    newTag: latest
+    newTag: latest # golabs-api
   - name: gjisus/golabs-ui
-    newTag: latest
+    newTag: latest # golabs-ui
