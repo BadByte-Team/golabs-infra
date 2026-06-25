@@ -3,7 +3,7 @@
 # ──────────────────────────────────────
 
 # ── Stage 1: Build ──
-FROM golang:1.22-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 RUN apk add --no-cache git ca-certificates
 
@@ -18,7 +18,7 @@ COPY . .
 
 # Compilar binario estático
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -ldflags="-s -w" -o /golabs-api ./cmd/main.go
+    go build -trimpath -ldflags="-s -w" -o /golabs-api ./cmd/api
 
 # ── Stage 2: Runtime ──
 FROM alpine:3.19
@@ -30,6 +30,7 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 COPY --from=builder /golabs-api .
+COPY --from=builder /app/configs/ configs/
 
 # Cambiar a usuario no-root
 USER appuser

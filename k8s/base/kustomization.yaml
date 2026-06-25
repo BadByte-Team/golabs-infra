@@ -12,6 +12,7 @@ resources:
   - ui/configmap-nginx.yaml
   - ui/deployment.yaml
   - ui/service.yaml
+  - db/configmap-init.yaml
   - db/secret.yaml
   - db/statefulset.yaml
   - db/service.yaml

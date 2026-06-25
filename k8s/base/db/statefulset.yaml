@@ -41,6 +41,9 @@ spec:
           volumeMounts:
             - name: db-data
               mountPath: /var/lib/mysql
+            - name: db-init
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
           livenessProbe:
             exec:
               command:
@@ -59,6 +62,10 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
+      volumes:
+        - name: db-init
+          configMap:
+            name: golabs-db-init
   volumeClaimTemplates:
     - metadata:
         name: db-data

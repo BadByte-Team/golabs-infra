@@ -8,15 +8,15 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copiar dependencias primero (cache de Docker layers)
-COPY ui/package*.json ./
+COPY ui/package.json ui/yarn.lock ./
 
-RUN npm ci --prefer-offline --no-audit
+RUN yarn install --frozen-lockfile
 
 # Copiar código fuente
 COPY ui/ .
 
 # Build de producción
-RUN npm run build
+RUN yarn build
 
 # ── Stage 2: Serve con Nginx ──
 FROM nginx:1.25-alpine
@@ -26,10 +26,6 @@ RUN rm -rf /usr/share/nginx/html/*
 
 # Copiar build de Vue
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# El ConfigMap de K8s monta la config personalizada de nginx
-# Pero incluimos una default por si se corre standalone
-COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 

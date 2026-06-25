@@ -1,0 +1,135 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: golabs-db-init
+  namespace: golabs
+  labels:
+    app.kubernetes.io/name: golabs-db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: golabs
+data:
+  # MariaDB ejecuta estos scripts en orden alfabético al inicializar
+  # Solo se ejecutan si /var/lib/mysql está vacío (primer arranque)
+  V1__create_users_table.sql: |
+    CREATE TABLE IF NOT EXISTS users (
+        id CHAR(36) PRIMARY KEY,
+        username VARCHAR(50) NOT NULL UNIQUE,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password_hash VARCHAR(255) NOT NULL,
+        role ENUM('admin','user') DEFAULT 'user',
+        points INT DEFAULT 0,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL
+    );
+
+  V2__ban_added.sql: |
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS banned BOOLEAN DEFAULT FALSE NOT NULL,
+    ADD COLUMN IF NOT EXISTS banned_at TIMESTAMP NULL;
+
+  V3__create_events_table.sql: |
+    CREATE TABLE IF NOT EXISTS events (
+        id CHAR(36) PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        description TEXT,
+        max_team_size INT NOT NULL,
+        status ENUM('draft','open','running','finished') NOT NULL,
+        starts_at TIMESTAMP NOT NULL,
+        ends_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL
+    );
+
+  V4__create_event_teams.sql: |
+    CREATE TABLE IF NOT EXISTS event_teams (
+        id CHAR(36) PRIMARY KEY,
+        event_id CHAR(36) NOT NULL,
+        name VARCHAR(100) NOT NULL,
+        join_secret_hash VARCHAR(255) NOT NULL,
+        score INT DEFAULT 0,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL,
+        UNIQUE(event_id, name),
+        FOREIGN KEY (event_id) REFERENCES events(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS event_team_members (
+        event_team_id CHAR(36) NOT NULL,
+        user_id CHAR(36) NOT NULL,
+        role ENUM('owner','member') NOT NULL,
+        joined_at TIMESTAMP NOT NULL,
+        PRIMARY KEY (event_team_id, user_id),
+        FOREIGN KEY (event_team_id) REFERENCES event_teams(id),
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+  V5__create_challenges_tables.sql: |
+    CREATE TABLE IF NOT EXISTS challenges (
+        id          CHAR(36) PRIMARY KEY,
+        event_id    CHAR(36) NOT NULL,
+        title       VARCHAR(255) NOT NULL,
+        description TEXT NOT NULL,
+        category    VARCHAR(64) NOT NULL,
+        points      INT NOT NULL DEFAULT 0,
+        difficulty  VARCHAR(32) NOT NULL DEFAULT 'medium',
+        visible     BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at  DATETIME NOT NULL,
+        updated_at  DATETIME NOT NULL,
+        FOREIGN KEY (event_id) REFERENCES events(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS flags (
+        id           CHAR(36) PRIMARY KEY,
+        challenge_id CHAR(36) NOT NULL UNIQUE,
+        hash         CHAR(64) NOT NULL,
+        created_at   DATETIME NOT NULL,
+        FOREIGN KEY (challenge_id) REFERENCES challenges(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS solves (
+        id            CHAR(36) PRIMARY KEY,
+        challenge_id  CHAR(36) NOT NULL,
+        event_team_id CHAR(36) NOT NULL,
+        user_id       CHAR(36) NOT NULL,
+        solved_at     DATETIME NOT NULL,
+        UNIQUE KEY uq_team_challenge (challenge_id, event_team_id),
+        FOREIGN KEY (challenge_id) REFERENCES challenges(id),
+        FOREIGN KEY (event_team_id) REFERENCES event_teams(id)
+    );
+
+  V6__unique_username.sql: |
+    -- Safe: MariaDB ignores duplicate index creation
+    ALTER TABLE users
+        MODIFY COLUMN username VARCHAR(50) NOT NULL;
+    CREATE UNIQUE INDEX IF NOT EXISTS uq_users_username ON users (username);
+
+  V7__indexes.sql: |
+    CREATE INDEX IF NOT EXISTS idx_challenges_event_visible
+        ON challenges (event_id, visible);
+    CREATE INDEX IF NOT EXISTS idx_challenges_event_category
+        ON challenges (event_id, category);
+    CREATE INDEX IF NOT EXISTS idx_solves_challenge_solved_at
+        ON solves (challenge_id, solved_at);
+    CREATE INDEX IF NOT EXISTS idx_event_teams_event_score
+        ON event_teams (event_id, score DESC);
+    CREATE INDEX IF NOT EXISTS idx_etm_team_id
+        ON event_team_members (event_team_id);
+    CREATE INDEX IF NOT EXISTS idx_etm_event_user
+        ON event_team_members (user_id);
+
+  V8__refresh_tokens.sql: |
+    CREATE TABLE IF NOT EXISTS refresh_tokens (
+        id         CHAR(36)     NOT NULL PRIMARY KEY,
+        user_id    CHAR(36)     NOT NULL,
+        token_hash CHAR(64)     NOT NULL UNIQUE,
+        expires_at TIMESTAMP    NOT NULL,
+        created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        revoked_at TIMESTAMP    NULL     DEFAULT NULL,
+        CONSTRAINT fk_rt_user FOREIGN KEY (user_id)
+            REFERENCES users (id) ON DELETE CASCADE
+    );
+    CREATE INDEX IF NOT EXISTS idx_rt_token_hash ON refresh_tokens (token_hash);
+    CREATE INDEX IF NOT EXISTS idx_rt_user_id    ON refresh_tokens (user_id);
+
+  V9__add_file_url_to_challenges.sql: |
+    ALTER TABLE challenges ADD COLUMN IF NOT EXISTS file_url VARCHAR(512) DEFAULT NULL;
